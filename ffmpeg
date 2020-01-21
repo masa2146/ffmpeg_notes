@@ -1,0 +1,16 @@
+ffmpeg -f x11grab -framerate 25 -video_size 1024x768 -i :0.0 -c:v copy -preset fast -pix_fmt bgr0 -b:v 3M -g 25 -an -f rtp_mpegts rtp://225.0.5.20:6000
+
+
+ffmpeg -re -i "Sony_Swordsmith_4K_8mbps.mp4"  -f mpegts "udp://10.0.5.193:2000"
+
+///////////////////////////// RTP TO SDP TO MP4 //////////////////////////////////////////////
+
+ffmpeg -re -thread_queue_size 4 -i Sony_Swordsmith_4K_8mbps.mp4 -strict -2 -vcodec copy -an -f rtp rtp://127.0.0.1:6005 -acodec copy -vn -sdp_file sdp_orn.sdp -f rtp rtp://127.0.0.1:7005
+
+ffmpeg -protocol_whitelist "file,rtp,udp" -i my_sdp_file -strict -2 saved_rtp_stream.mp4
+
+///////////////////////////////// CALISAN /////////////////////////////////////////////
+ffmpeg -re -i Sony_Swordsmith_4K_8mbps.mp4 -vcodec mpeg4  -an -ar 8000 -f mulaw -f rtp_mpegts rtp://127.0.0.1:11111
+
+
+

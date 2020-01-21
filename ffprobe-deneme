@@ -1,0 +1,20 @@
+ffprobe -v error -show_format -show_streams -stimeout 2000 udp://@225.0.5.222:1037
+
+ffprobe -v error -show_format -show_streams -timeout 2000 udp://@225.0.5.222:1037
+
+ffprobe -v error -show_format -show_streams -timeout 2000 rtp://@225.0.5.5:20000
+
+ffprobe -v error -show_format -show_streams rtp://@225.0.5.5:31000?timeout=2000
+
+ffprobe -v quiet -print_format json -show_streams rtp://@225.0.5.5:33000
+
+ffprobe -v quiet -print_format json -show_streams rtp://@225.0.5.5:33000 
+
+ffprobe -v error -print_format json -show_streams -timeout 2000 udp://@225.0.5.222:1037
+
+
+
+gstrtpbin name=rtpbin3 \
+udpsrc port=5031 caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, sprop-parameter-sets=(string)\"Z01AFeygbCPNLgIgAAADAC7msoAB4sWywA\\=\\=\\,aOvssg\\=\\=\", payload=(int)96, ssrc=(uint)861153369, clock-base=(uint)4026289255, seqnum-base=(uint)30449" ! rtpbin3.recv_rtp_sink_0 rtpbin3. ! rtph264depay ! queue ! ffdec_h264 ! videobox border-alpha=0 top=-240 left=0 ! mix. \
+udpsrc port=5032 ! rtpbin3.recv_rtcp_sink_0 \
+rtpbin3.send_rtcp_src_0 ! udpsink port=5033 host=192.168.1.104

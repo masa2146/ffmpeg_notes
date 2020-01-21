@@ -1,0 +1,143 @@
+
+
+
+ffmpeg -loglevel debug -y -buffer_size 500000 -thread_queue_size 128 -i rtsp://10.0.5.74:3049/S1 -metadata title=opcon4 -metadata creation_time="`date +%` `date + %T`" -map 0:a  -acodec copy -c:v copy /home/fatih/Desktop/opcon4Manual.mp4
+
+
+ffmpeg -loglevel debug -y -buffer_size 500000 -thread_queue_size 128 -i udp://@225.0.5.74:1026 -metadata title=opcon4 -metadata creation_time="`date +%` `date + %T`" -map 0:a  -acodec copy -c:v copy /home/fatih/Desktop/opcon4Manual.mp4
+
+
+
+ffmpeg -i "rtsp://10.0.5.74:3049/S1" -c:v -c:a copy /home/fatih/Desktop/opcon4Manual.mp4
+ 
+ffmpeg -i rtsp://10.0.5.74:3049/S1 -map 0:a -vn -acodec copy -c:v copy -bsf:a aac_adtstoasc -f segment -segment_time 10 -reset_timestamps 1 -map 0 /home/fatih/Desktop/opcon4Manual.mp4
+
+ffmpeg -i rtsp://10.0.5.74:3049/S1 -c copy -map 0 -f segment -segment_time 600 -segment_format mp4 "out%03d.mp4"
+
+ffmpeg -y -re -acodec pcm_s16le -rtsp_transport udp -i rtsp://10.0.5.74:3049/S1 -vcodec copy -af asetrate=48000 -acodec aac -b:a 96k -max_muxing_queue_size 1024 test.mp4
+
+
+ffmpeg -y -re -acodec pcm_s16le -rtsp_transport udp -i rtsp://10.0.5.74:3049/S1 -vcodec copy -acodec aac -b:a 96k -max_muxing_queue_size 1024 ik_aac.ts
+
+ffmpeg -i rtsp://10.0.5.74:3049/S1 -vn -acodec copy output-audio.aac
+
+ffmpeg -rtsp_transport udp -i rtsp://10.0.5.74:3049/S1 -c:a copy -c:v copy -t 10 -y out.mp4
+--meta-date=
+ vlc -vvv -I dummy rtsp://10.0.5.74:3049/S1  --sout='#standard{access=file,mux=mp4,dst=/home/fatih/Desktop/opcon4Manual.mp4}'
+
+vlc -vvv -I dummy rtsp://10.0.5.74:3049/S1 --meta-title=naber --meta-date="`date +%F` `date +%T`" --sout='#standard{access=file,mux=mp4,dst=/home/fatih/Desktop/opcon4Manual.mp4}' > /dev/null 2>&1 & echo "$!" > /home/fatih/Desktop/dededed.pid
+
+ffmpeg -y -loglevel verbose -i udp://@225.0.5.74:1026 -acodec copy -vcodec copy /home/fatih/Desktop/opcon4Manual.mp4
+
+ffmpeg -re -i udp://@225.0.5.74:1026?fifo_size=5000000 -vcodec libx264 -vb 500000 -g 60 -vprofile main -acodec aac -ab 128000 -ar 48000 -ac 2 -vbsf h264_mp4toannexb -b:v 1000k -minrate 1000k -maxrate 1000k -strict experimental  "/home/fatih/Desktop/opcon4Manual.mp4"
+
+ffmpeg -re -i udp://@225.0.5.74:1026?fifo_size=5000000 -vcodec libx264 -vb 500000 -g 60 -vprofile main -acodec aac -ab 128000 -ar 48000 -ac 2 "/home/fatih/Desktop/opcon4Manual.mp4"
+
+ffmpeg -y -buffer_size 500000 -thread_queue_size 128 -i udp://@225.0.5.74:1026?fifo_size=5000000 -metadata title=naber -metadata creation_time="`date +%F` `date +%T`" -c:a copy -c:v copy /home/fatih/Desktop/opcon4Manual.mp4
+
+ffmpeg -v verbose -y -i "rtsp://10.0.5.74:3049/S1" -codec copy -bsf:a aac_adtstoasc /home/fatih/Desktop/test.mp4
+
+ffmpeg -i rtsp://10.0.5.74:3049/S1 -c:a aac -c:v copy -max_muxing_queue_size 1024 /home/fatih/Desktop/test.mp4
+
+ffmpeg -y -re -acodec pcm_s16le -rtsp_transport udp -i rtsp://10.0.5.74:3049/S1 -vcodec copy -acodec aac -b:a 96k -max_muxing_queue_size 1024 /home/fatih/Desktop/test.mp4
+
+
+
+
+ffmpeg -i dene.mkv -c:v libx264 -c:a libfdk_aac output.mp4
+
+ffmpeg -i dene.mkv -y -vcodec libx264 -acodec ac3 cik.mp4
+
+ffmpeg -i dene.mkv -y -vcodec copy -acodec copy cik.mp4
+
+ffmpeg -i dene.mkv -strict experimental -map 0:0 -map 0:1 -map 0:2 -c:v copy -c:a aac -b:a 384 -c:s copy output.mp4
+
+ffmpeg -fflags +genpts -i dene.mkv -r 24 1.mp4
+
+ffmpeg -i dene.mkv -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac example.mp4
+
+ffmpeg -i dene.mkv -c:v libx264 -c:a ac3 -crf 20 -map 0:2 -map 0:1 vidui.mp4
+
+ffmpeg -i dene.mkv -c:v libx264 -c:a ac3 -crf 20 -map 0:v:0 -map 0:a:1 vidui.mp4
+
+ffmpeg -i dene.mkv -map 0 -map -0:s -c copy -c:v libx264 -c:a aac  output.mp4
+
+ffmpeg -i dene.mkv -map 0:v -map 0:a -c copy -c:v libx264 -c:a aac output.mp4
+
+ffmpeg -i dene.mkv -filter_complex "[0:v][1:v]overlay=0:0" -map "[out]" -map 0:a 001.mp4
+
+ffmpeg -i dene.mkv -strict experimental -map 0:0 -map 0:1 -map 0:2 -c:v libx264 -c:a aac -b:a 384 -c:s mov_text fatih-test.mp4
+
+************************************************************************
+
+
+gst-launch filesrc location=video.avi !
+decodebin2 name=dec ! queue ! ffmpegcolorspace ! autovideosink
+dec. ! queue ! audioconvert ! audioresample ! autoaudiosink
+
+
+gst-launch-0.10 filesrc location=output.mp4 ! h264parse ! ffdec_h264 ! ffmpegcolorspace ! deinterlace ! xvimagesink
+
+
+gst-launch filesrc location=output.mp4 ! qtdemux name=demux  demux.audio_00 ! decodebin ! audioconvert ! audioresample ! autoaudiosink   demux.video_00 ! queue ! ffdec_h264 ! ffmpegcolorspace ! videoscale ! autovideosink
+
+
+
+
+ gst-launch-1.0 -v filesrc location=output.mp4 typefind=true ! video/quicktime ! aiurdemux ! queue max-size-time=0 ! vpudec ! waylandsink
+
+
+
+gst-launch filesrc location=output.mp4 ! qtdemux name=d d.video_00 ! queue ! theoradec ! xvimagesink d.audio_00 ! queue ! vorbisdec  ! audioconvert ! audioresample
+
+
+gst-launch-1.0 -v filesrc location="output.mp4" name=demux demux. ! queue ! rtph264depay ! avdec_h264  ! autovideosink sync=false demux. ! queue  ! alawdec
+
+gst-launch -v rtspsrc location="rtsp://admin:1234@10.0.5.15:554/video1+audio1" name=demux demux. ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! autovideosink sync=false
+
+gst-launch-0.10 -v filesrc location="output.mp4" name=demux demux. ! ffdec_h264 ! ffmpegcolorspace ! autovideosink
+
+gst-launch-0.10 playbin2 uri=file:output.mp4 video-sink="imxv4l2sink" flags=0x51
+
+gst-launch-0.10 filesrc location=output.mp4 ! decodebin2 name=dec ! queue ! autovideosink dec. ! queue ! autoaudiosink
+
+
+
+gst-launch-1.0 filesrc location=output.mp4 !  gdpdepay ! rtph264depay ! h264parse ! vaapih264dec ! videoconvert ! videoscale ! autovideosink -e
+
+gst-launch-0.10 filesrc location=calisma.mp4  ! qtdemux ! h264parse ! ffdec_h264 ! queue ! ffmpegcolorspace ! autovideosink 
+
+
+gst-launch-1.0 -e v4l2src ! x264enc ! mp4mux ! filesink location=output.mp4
+
+gst-launch-0.10 filesrc location=output.mp4 ! decodebin2 name=dec ! queue ! autovideosink dec. ! queue ! autoaudiosink
+
+
+
+
+******************* CALISAN ********************
+gst-launch -v playbin uri="file:///home/fatih/Desktop/output.mp4"
+
+gst-launch-1.0 filesrc location=output.mp4  ! qtdemux ! avdec_h264 ! queue ! videoconvert ! autovideosink  #CALISAN
+
+gst-launch-0.10 filesrc location=output.mp4  ! qtdemux ! ffdec_h264 ! queue ! ffmpegcolorspace ! autovideosink  #CALISAN
+
+
+
+gst-launch filesrc location=output.mp4 ! qtdemux name=demux  demux.audio_00 ! decodebin ! audioconvert ! audioresample ! autoaudiosink   demux.video_00 ! queue ! ffdec_h264 ! ffmpegcolorspace ! videoscale ! autovideosink
+
+
+gst-launch filesrc location=calisma.mp4 ! qtdemux name=demux  demux.audio_00 ! decodebin ! audioconvert ! audioresample ! autoaudiosink   demux.video_00 ! queue ! decodebin ! ffmpegcolorspace ! videoscale ! autovideosink
+
+
+
+
+///////////////////////
+
+gst-launch uridecodebin uri=file:///home/fatih/Desktop/calisma.mp4 ! autovideosink
+
+
+gst-launch-1.0 -v --gst-debug=4 filesrc location=output.mp4 ! decodebin name=demux demux. ! queue ! autovideosink demux. ! queue ! autoaudiosink
+
+
+
